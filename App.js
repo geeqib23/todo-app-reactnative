@@ -1,90 +1,91 @@
 import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StatusBar, FlatList} from 'react-native';
+import styled from 'styled-components';
+import AddInput from './Components/AddInput';
+import TodoList from './Components/TodoList';
+import Empty from './Components/Empty';
+import Header from './Components/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const App = () => {
-  const [text, setText] = useState('');
+export default function App() {
+  const [data, setData] = useState([]);
 
-  const [tasks, setTasks] = useState([]);
-
-  const handleSubmit = () => {
-    console.log(text);
-    setTasks(prev => prev.concat(text));
-    setText('');
+  const submitHandler = async value => {
+    if (value) {
+      setData(prevTodo => {
+        return [
+          {
+            value: value,
+            key: Math.random().toString(),
+          },
+          ...prevTodo,
+        ];
+      });
+    }
   };
+
   useEffect(() => {
-    console.log(tasks);
-  }, [tasks]);
+    if (data.length) {
+      // console.log(data);
+      async function storeData() {
+        try {
+          await AsyncStorage.setItem('data', JSON.stringify(data));
+          // console.log('successfully saved');
+        } catch (e) {
+          alert('error saving');
+        }
+      }
+      storeData();
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('data');
+        // jsonValue && console.log('successfully read', JSON.parse(jsonValue));
+        jsonValue && setData(JSON.parse(jsonValue));
+      } catch (e) {
+        alert('error reading');
+      }
+    };
+    getData();
+  }, []);
+
+  const deleteItem = key => {
+    setData(prevTodo => {
+      return prevTodo.filter(todo => todo.key != key);
+    });
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>TO-DO APP</Text>
-      <TextInput
-        style={styles.textBox}
-        placeholder="Enter a task"
-        value={text}
-        onChangeText={value => setText(value)}
-        onSubmitEditing={handleSubmit}
-      />
+    <ComponentContainer>
       <View>
-        {tasks.map((task, index) => {
-          return (
-            <View key={index} style={styles.taskBox}>
-              <Text style={{fontSize: 30}}> {task + '  ' + index} </Text>
-              <View style={styles.deleteButton}>
-                <TouchableOpacity
-                  style={{padding: 3, backgroundColor: 'red'}}
-                  title={'Delete'}
-                  onPress={() => {
-                    setTasks(prev =>
-                      prev.slice(0, index).concat(prev.slice(index + 1)),
-                    );
-                  }}>
-                  <Text style={{fontSize: 13}}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        })}
+        <StatusBar barStyle="light-content" backgroundColor="black" />
       </View>
-    </SafeAreaView>
+
+      <View>
+        <FlatList
+          data={data}
+          ListHeaderComponent={() => <Header />}
+          ListEmptyComponent={() => <Empty />}
+          keyExtractor={item => item.key}
+          renderItem={({item}) => (
+            <TodoList item={item} deleteItem={deleteItem} />
+          )}
+        />
+        <View>
+          <AddInput submitHandler={submitHandler} />
+        </View>
+      </View>
+    </ComponentContainer>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: 'dodgerblue',
-  },
-  title: {
-    fontSize: 50,
-    fontWeight: '700',
-  },
-  textBox: {
-    backgroundColor: 'white',
-  },
-  taskBox: {
-    flexDirection: 'row',
-    width: 200,
-    alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  deleteButton: {
-    position: 'absolute',
-    height: 20,
-    padding: 0,
-    right: 0,
-    fontSize: 5,
-  },
-});
-
-export default App;
+const ComponentContainer = styled.View`
+  background-color: #121212;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
