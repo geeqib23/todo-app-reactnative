@@ -2,14 +2,22 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {observer} from 'mobx-react-lite';
+import {useStore} from '../store/Store';
+import Store from '../store/Store';
+import * as Test from '../store/Store';
 
-export default function AddInput({submitHandler}) {
+const AddInput = observer(() => {
+  // const store = useStore();
   const [value, setValue] = useState('');
+  // const store = new Store();
+  // const {data, test, submitHandler, deleteItem, setTest} = store;
 
-  const onChangeText = text => {
-    // console.log(text);
-    setValue(text);
-  };
+  // const onChangeText = text => {
+  //   console.log(text);
+  //   setValue(text);
+  // };
+  const {test} = Test;
 
   return (
     <ComponentContainer>
@@ -17,13 +25,13 @@ export default function AddInput({submitHandler}) {
         <Input
           placeholder="Add Task..."
           value={value}
-          onChangeText={onChangeText}
+          onChangeText={setValue}
         />
       </InputContainer>
       <SubmitButton
         onPress={() => {
           if (value) {
-            submitHandler(value);
+            test.setTest(value);
             setValue('');
           }
         }}>
@@ -31,7 +39,9 @@ export default function AddInput({submitHandler}) {
       </SubmitButton>
     </ComponentContainer>
   );
-}
+});
+
+export default AddInput;
 
 const ComponentContainer = styled.View`
   flex-direction: row;

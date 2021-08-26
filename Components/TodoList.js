@@ -1,3 +1,4 @@
+import {observer} from 'mobx-react-lite';
 import React from 'react';
 import {View} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -6,7 +7,7 @@ import styled from 'styled-components';
 
 let today = new Date().toISOString().slice(0, 10);
 
-export default function TodoList({item, deleteItem}) {
+const TodoList = observer(({item, deleteItem}) => {
   return (
     <ComponentContainer>
       <ListContainer>
@@ -23,7 +24,9 @@ export default function TodoList({item, deleteItem}) {
       </ListContainer>
     </ComponentContainer>
   );
-}
+});
+
+export default TodoList;
 
 const ListContainer = styled.TouchableOpacity`
   background-color: #1e1e1e;
