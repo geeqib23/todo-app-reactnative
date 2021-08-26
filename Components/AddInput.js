@@ -6,6 +6,7 @@ import {observer} from 'mobx-react-lite';
 import {useStore} from '../store/Store';
 import Store from '../store/Store';
 import * as Test from '../store/Store';
+import {store} from '../store/Store';
 
 const AddInput = observer(() => {
   // const store = useStore();
@@ -17,7 +18,7 @@ const AddInput = observer(() => {
   //   console.log(text);
   //   setValue(text);
   // };
-  const {test} = Test;
+  // const {test} = Test;
 
   return (
     <ComponentContainer>
@@ -31,7 +32,7 @@ const AddInput = observer(() => {
       <SubmitButton
         onPress={() => {
           if (value) {
-            test.setTest(value);
+            store.submitHandler(value);
             setValue('');
           }
         }}>

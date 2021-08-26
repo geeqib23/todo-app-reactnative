@@ -4,10 +4,11 @@ import {View} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styled from 'styled-components';
+import {store} from '../store/Store';
 
 let today = new Date().toISOString().slice(0, 10);
 
-const TodoList = observer(({item, deleteItem}) => {
+const TodoList = observer(({item}) => {
   return (
     <ComponentContainer>
       <ListContainer>
@@ -18,7 +19,7 @@ const TodoList = observer(({item, deleteItem}) => {
           {item.value && <TextItem>{item.value}</TextItem>}
           <TextDate> {today}</TextDate>
         </View>
-        <IconContainer onPress={() => deleteItem(item.key)}>
+        <IconContainer onPress={() => store.deleteItem(item.key)}>
           <MaterialIcons name="delete" size={24} color="#ffc68a" />
         </IconContainer>
       </ListContainer>

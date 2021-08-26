@@ -32,15 +32,15 @@ export default class Store {
     },
   ]);
 
-  // constructor() {
-  //   makeObservable(this, {
-  //     // test: observable,
-  //     data: observable,
-  //     submitHandler: action,
-  //     deleteItem: action,
-  //     // setTest: action,
-  //   });
-  // }
+  constructor() {
+    makeObservable(this, {
+      // test: observable,
+      data: observable,
+      submitHandler: action,
+      deleteItem: action,
+      // setTest: action,
+    });
+  }
 
   submitHandler(value) {
     console.log(this.data);
@@ -58,6 +58,8 @@ export default class Store {
     this.data = this.data.filter(todo => todo.key !== key);
   }
 }
+
+export const store = observable(new Store());
 
 const StoreContext = createContext();
 
